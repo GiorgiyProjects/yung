@@ -1,0 +1,46 @@
+* { margin: 0;  background:black; text-align: center;}
+canvas { width:950px; margin: auto; display: block;}
+
+#imageContainer {
+	position: relative;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+
+}
+
+#imageContainer img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transition: transform 0.5s ease-in-out;
+	:hover, focus {
+		animation-name: animate;
+		animation-duration: 1s;
+		transform-origin: 50% 50%;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+	}
+
+}
+
+@keyframes animate {
+	0% {
+		transform: translate(2px, 1px) rotate(0deg);
+	}
+	10% {
+		transform: translate(-2px, -1px) rotate(0deg);
+	}
+	20% {
+		transform: translate(2px, 1px) rotate(0deg);
+	}
+	30% {
+		transform: translate(-2px, -1px) rotate(0deg);
+	}
+	40% {
+		transform: translate(2px, 1px) rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

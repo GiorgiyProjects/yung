@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content=
+         "width=device-width, initial-scale=1.0">
+      <title>HTML Project</title>
+      <link rel="stylesheet" href="index.css">
+      <script type="text/javascript">
+         window.onload = function(){
+            let images = [
+               'https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+            ];
+
+            
+
+            var canvas = document.getElementById("concentric_circles");
+            //var image = new Image();
+            var image = document.getElementById("image");
+            image.src = 'https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg';
+
+            image.onload = function() {
+                image.style.transform = "translateX(100%)";
+                setTimeout(function() {
+                    image.style.transform = "translateX(0)";
+                }, 500);
+            };
+            requestAnimationFrame(draw);
+
+
+            var ctx = canvas.getContext("2d");
+            console.log("window load");
+            var canvasWidth = canvas.width;
+            var canvasHeight = canvas.height;
+            
+            var circles = new Array();
+            var lines = new Array();
+            let numParts = 12;
+
+            function BigLine(X1, X2, Y1, Y2) {
+               this.X1 = X1;
+               this.X2 = X2;
+               this.Y1 = Y1;
+               this.Y2 = Y2;
+               //console.log(this.X1, this.X2, this.Y1, this.Y2);
+            }
+
+            BigLine.prototype.add = function () {
+               ctx.setTransform(1,0,0,1,0,0);
+               ctx.beginPath();
+               ctx.moveTo(this.X1, this.Y1);
+               ctx.lineWidth = 5;
+               ctx.lineTo(this.X2, this.Y2);
+               var rColor = 'rgba(' + (Math.floor(0)) + ',' + (Math.floor(0)) + ',' + (Math.floor(0)) + ', 0.5)';
+               ctx.strokeStyle = rColor;
+               ctx.stroke();
+               ctx.closePath();
+               ctx.setTransform(1,0,0,1,0,0);
+            };
+
+
+            let sectorColors = new Array(numParts).fill("rgba(0, 0, 0, 0.5)");    
+            function SmallLine(X1, X2, Y1, Y2, partNum) {
+               this.X1 = X1;
+               this.X2 = X2;
+               this.Y1 = Y1;
+               this.Y2 = Y2;
+               this.partNum = partNum;
+            // console.log(this.X1, this.X2, this.Y1, this.Y2);
+            }
+
+            SmallLine.prototype.add = function () {
+               ctx.setTransform(1,0,0,1,0,0);
+               ctx.beginPath();
+               ctx.moveTo(this.X1, this.Y1);
+               ctx.lineWidth = 1;
+               ctx.lineTo(this.X2, this.Y2);
+               var rColor = sectorColors[this.partNum];
+               //console.log(rColor);
+               ctx.strokeStyle = rColor;
+               ctx.stroke();
+               ctx.closePath();
+               ctx.setTransform(1,0,0,1,0,0);
+            };
+
+            function BigCircle(radius, iX, iY) {
+               this.radius = radius;
+               this.iX = iX;
+               this.iY = iY;
+            }
+
+  
+            BigCircle.prototype.add = function () {        
+               var rColor = 'rgba(' + (Math.floor(256)) + ',' + (Math.floor(256)) + ',' + (Math.floor(256)) + ', .3)';
+               
+               ctx.beginPath();
+               ctx.arc(this.iX, this.iY, this.radius, 0, Math.PI * 2);
+               ctx.closePath();
+               
+               ctx.fillStyle = rColor;
+               ctx.fill();
+               ctx.strokeStyle = rColor;
+               ctx.stroke();
+            
+            };
+
+            function InnerBuble(radius, iX, iY) {
+               this.radius = radius;
+               this.iX = iX;
+               this.iY = iY;
+            }
+
+  
+            InnerBuble.prototype.add = function () {        
+               var rColor = 'rgba(' + (Math.floor(256)) + ',' + (Math.floor(256)) + ',' + (Math.floor(256)) + ', 1.0)';
+               
+               ctx.beginPath();
+               ctx.arc(this.iX, this.iY, this.radius, 0, Math.PI * 2);
+               ctx.closePath();
+               ctx.lineWidth = 50;
+
+               ctx.strokeStyle = rColor;
+               ctx.stroke();
+            
+            };
+
+            function Circle(angle, radius, rRadius, iX, iY, j) {
+               this.angle = angle;
+               this.radius = radius;
+               this.rRadius = rRadius;
+               this.iX = iX;
+               this.iY = iY;
+               this.inc = 1;
+               this.pos = j;
+            }
+         
+            Circle.prototype.add = function () {
+               this.angle += this.inc;
+               this.cX = this.iX + this.rRadius * (Math.cos(this.angle + this.pos * Math.PI/2)); 
+               this.cY = this.iY + this.rRadius * (Math.sin(this.angle + this.pos * Math.PI/2));
+               
+               if (this.angle >= (Math.PI * 2)) {
+                  this.angle = 0;
+                  this.inc = .01;//+ Math.random() * .1;
+               }
+               
+               
+               var rColor = 'rgba(' + (0) + ',' + (0) + ',' + (0) + ', 1)';
+               
+               ctx.beginPath();
+               ctx.arc(this.cX, this.cY, this.radius, 0, Math.PI * 2);
+               ctx.closePath();
+               
+               ctx.fillStyle = rColor;
+               ctx.fill();
+               ctx.strokeStyle = rColor;
+               ctx.stroke();
+            
+            };
+            
+            function drawCC() {
+               var iX = canvasWidth / 2;
+               var iY = canvasHeight / 2;
+               let big_radii = 400;
+               let inner_radii = 195;
+               let small_radii = 95;
+
+
+               const cur_angle = (2 * Math.PI) / numParts;
+               lines.push(new BigLine(iX - big_radii,  iX - small_radii, iY, iY));
+               lines.push(new BigLine(iX,  iX, iY - big_radii, iY - small_radii));
+               lines.push(new BigLine(iX + small_radii,  iX + big_radii, iY, iY));
+               lines.push(new BigLine(iX,  iX, iY + small_radii, iY + big_radii));
+
+               for (let i = 0; i < numParts; i++) {
+                  const x1 = iX - big_radii * Math.cos(cur_angle * i);
+                  const y1 = iY - big_radii * Math.sin(cur_angle * i);
+                  const x2 = iX - inner_radii * Math.cos(cur_angle * i);
+                  const y2 = iY - inner_radii * Math.sin(cur_angle * i);
+                  lines.push(new SmallLine(x1,  x2, y1, y2, i));
+               }
+               
+               var bub = new InnerBuble(117, iX, iY);
+               circles.push(bub);
+            
+               for (var i = 2; i < 5 ; i++) {
+                  var bigcircle1 = new BigCircle(100 * i - 10, iX, iY);
+				      var bigcircle2 = new BigCircle(100 * i + 10, iX, iY);
+                  circles.push(bigcircle1);
+                  circles.push(bigcircle2);
+                  
+                  for (var j = 0; j < 5; j++) {
+                     var radius = 5;
+                     var rRadius = 70 * i;
+                     var angle =100 + i;
+                     var circle = new Circle(angle, radius, rRadius, iX, iY, j);
+                     circles.push(circle);
+                  }
+               }
+              // requestAnimationFrame(draw);
+            }
+            
+            function draw() {
+               ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+               ctx.fillStyle = "#000000";
+               
+               for (var i = circles.length - 1; i >= 0; i--) {
+                  if (i == 0) {
+                     ctx.drawImage(image,
+                        canvas.width / 2 - 100,
+                        canvas.height / 2 - 100,
+                        200, 200
+                     );  
+                  }
+                  var circle = circles[i];
+                  circle.add();
+               }
+
+			      for (var i = 0; i < lines.length; i++) {
+                  var line = lines[i];
+				      line.add();
+               }
+               requestAnimationFrame(draw);               
+            }
+
+			canvas.addEventListener("mousemove", (event) => {
+				const rect = canvas.getBoundingClientRect();
+				const mouseX = event.clientX - rect.left;
+				const mouseY = event.clientY - rect.top;
+				var centerX = canvasWidth / 2;
+            var centerY = canvasHeight / 2;
+				const angle = (2 * Math.PI) / numParts;
+
+				const angleToMouse = Math.atan2(mouseY - centerY, mouseX - centerX);
+				let sectorIndex = Math.floor((angleToMouse + Math.PI) / angle);
+
+				if (sectorIndex < 0) {
+					sectorIndex = numParts - 1;
+				}
+
+				//sectorColors.fill("rgba(0, 0, 255, 0.5)");
+				sectorColors = new Array(numParts).fill("rgba(0, 0, 0, 0.5)");  
+				sectorColors[sectorIndex] = "rgba(255, 0, 0, 1.0)";
+				if (sectorIndex == numParts - 1) {
+					sectorColors[0] = "rgba(255, 0, 0, 1.0)";
+				} else {
+					sectorColors[sectorIndex + 1] = "rgba(255, 0, 0, 1.0)";
+				}
+				sectorColors[sectorIndex + 1] = "rgba(255, 0, 0, 1.0)";
+				//draw();
+			});
+
+         canvas.addEventListener("click", (event) => {
+            console.log("mouse down event");
+				const rect = canvas.getBoundingClientRect();
+				const mouseX = event.clientX - rect.left;
+				const mouseY = event.clientY - rect.top;
+				var centerX = canvasWidth / 2;
+                var centerY = canvasHeight / 2;
+				const angle = (2 * Math.PI) / numParts;
+
+				const angleToMouse = Math.atan2(mouseY - centerY, mouseX - centerX);
+				let sectorIndex = Math.floor(
+					(angleToMouse + Math.PI) / angle
+				);
+
+				if (sectorIndex < 0) {
+					sectorIndex = numParts - 1;
+				}
+
+            let images = [
+               'https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://cdnb.artstation.com/p/assets/images/images/004/523/311/large/tran-hoang-dai-dien.jpg?1484281065',
+               'https://images-na.ssl-images-amazon.com/images/I/61g2JlHMf8L.jpg',
+               'https://cdn.fishki.net/upload/post/2022/09/16/4263900/4d9d4e95b8542b3f29ff1610a9808585.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+               'https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg',
+            ];
+
+            image.src = images[sectorIndex];
+			});
+            drawCC();
+         };
+      </script>
+   </head>
+   <body>
+      <canvas id="concentric_circles" width="1000" height="1650"></canvas>
+      <div id="imageContainer">
+         <img id="image" src="https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg" width="200" height="200">
+     </div>
+   </body>
+</html>

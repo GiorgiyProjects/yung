@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+        
+        #imageContainer {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        #imageContainer img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+    <div id="imageContainer">
+        <img id="image" src="https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg" width="200" height="200">
+    </div>
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        var currentImageIndex = 0;
+        var images = ["https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg",
+               "https://i.pinimg.com/736x/2d/f5/a1/2df5a1a05ac6d2cf714b65de9fe69a4a--lord-elves.jpg",
+               "https://cdnb.artstation.com/p/assets/images/images/004/523/311/large/tran-hoang-dai-dien.jpg?1484281065"];
+        
+        function drawBubble() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw the bubble circles
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 150, 0, Math.PI * 2);
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 120, 0, Math.PI * 2);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        }
+        
+        function loadImage() {
+            var image = document.getElementById("image");
+            var newImage = new Image();
+            newImage.src = images[currentImageIndex];
+            newImage.onload = function() {
+                image.style.transform = "translateX(100%)";
+                setTimeout(function() {
+                    image.src = newImage.src;
+                    image.style.transform = "translateX(0)";
+                    drawBubble();
+                }, 500);
+            };
+        }
+        
+        loadImage();
+        
+        canvas.addEventListener("click", function() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            loadImage();
+        });
+    </script>
+</body>
+</html>

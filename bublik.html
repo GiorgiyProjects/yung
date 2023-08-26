@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+    <script>
+        // Получаем элемент canvas и его контекст
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        
+        // Создаем маску для бублика
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 120, 0, Math.PI * 2);
+        ctx.clip();
+        
+        // Загружаем изображение и рисуем его внутри маски
+        var img = new Image();
+        img.src = 'https://mensnow.ru/wp-content/uploads/2022/02/vlastelin-kolets-ien-makalen-1.jpg';
+        img.onload = function() {
+            // Рисуем фотографию сначала, чтобы она была под бубликом
+            ctx.drawImage(img, canvas.width / 2 - 100, canvas.height / 2 - 100, 200, 200);
+            
+            // Рисуем внешний круг бублика
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 150, 0, Math.PI * 2);
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+            
+            // Рисуем внутренний круг бублика
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 120, 0, Math.PI * 2);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        };
+        
+        ctx.restore();
+    </script>
+</body>
+</html>
